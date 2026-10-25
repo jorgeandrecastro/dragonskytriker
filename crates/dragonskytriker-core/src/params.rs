@@ -1,3 +1,4 @@
+use crate::battery::Battery;
 use crate::GRAVITY;
 
 /// Paramètres physiques d'un quadricoptère en X.
@@ -31,6 +32,8 @@ pub struct QuadParams {
     pub restitution: f64,
     /// Vitesse d'impact au-delà de laquelle le drone est détruit (m/s).
     pub crash_speed: f64,
+    /// Batterie (état initial à chaque décollage depuis un reset).
+    pub battery: Battery,
 }
 
 impl Default for QuadParams {
@@ -51,6 +54,7 @@ impl Default for QuadParams {
             collision_radius: 0.17,
             restitution: 0.25,
             crash_speed: 5.0,
+            battery: Battery::default(),
         }
     }
 }

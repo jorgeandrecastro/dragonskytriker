@@ -117,18 +117,21 @@ pub struct Quadrotor {
 }
 
 impl Quadrotor {
-    /// Crée un drone posé à l'origine.
+    /// Crée un drone posé à l'origine, avec la batterie décrite par `params.battery`.
     pub fn new(params: QuadParams) -> Self {
-        Self { mixer: Mixer::new(&params), params, state: QuadState::default() }
+        let state = QuadState { battery: params.battery, ..QuadState::default() };
+        Self { mixer: Mixer::new(&params), params, state }
     }
 
-    /// Replace le drone au sol à `position` (y est ramené à 0), cap `yaw`, batterie pleine.
+    /// Replace le drone au sol à `position` (y est ramené à 0), cap `yaw`,
+    /// avec la batterie initiale décrite par `params.battery`.
     pub fn reset(&mut self, position: Vec3, yaw: f64) {
         self.state = QuadState {
             pose: Pose3::new(
                 Rotation3::from_axis_angle(&[0.0, 1.0, 0.0], yaw),
                 [position[0], 0.0, position[2]],
             ),
+            battery: self.params.battery,
             ..QuadState::default()
         };
     }
@@ -268,7 +271,7 @@ impl Quadrotor {
                 }
             }
 
-            // CORRECTION ICI : Seuil assoupli à 1e-6 pour stopper le clignotement graphique
+            // Seuil assoupli à 1e-6 pour stopper le clignotement graphique.
             if s.pose.rotation.orthogonality_error() > 1e-6 {
                 s.pose.rotation = s.pose.rotation.renormalized();
             }

@@ -35,6 +35,9 @@ mod dynamics;
 mod mission;
 mod mixer;
 mod params;
+pub mod config;
+
+
 
 pub use autopilot::{Autopilot, Command, FlightMode};
 pub use control::{Controller, Gains, Setpoint};
@@ -56,6 +59,7 @@ pub use params::QuadParams;
 
 pub use tiny_rodriguez_nostd as geometry;
 pub use tiny_rodriguez_nostd::{Pose3, Rotation3, Vec3};
+pub use config::{AirConfig, BatteryConfig, ConfigError, DroneConfig, GainsConfig, SimConfig, WindConfig};
 
 /// Accélération de la pesanteur (m/s²).
 pub const GRAVITY: f64 = 9.81;

@@ -1,0 +1,20 @@
+{
+    "seed": 42,
+    "drone": {
+        "mass_kg": 1.2,
+        "max_motor_thrust_n": 8.0,
+        "drag_n_s_m": 0.08
+    },
+    "wind": {
+        "mean_m_s": [
+            3.0,
+            0.0,
+            -1.0
+        ],
+        "gust_m_s": 1.2,
+        "seed": 21
+    },
+    "air": {
+        "origin_altitude_m": 1500
+    }
+}

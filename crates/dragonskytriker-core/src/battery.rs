@@ -1,4 +1,4 @@
-//! Batterie LiPo 4S : tension en charge, chute avec la décharge, poussée disponible.
+//! Batterie LiPo : tension en charge, chute avec la décharge, poussée disponible.
 
 /// Batterie simple : tension à vide selon l'état de charge + résistance interne.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -30,6 +30,30 @@ impl Default for Battery {
 }
 
 impl Battery {
+    /// Tension nominale d'une cellule LiPo (V), pour convertir mAh en Wh.
+    pub const NOMINAL_CELL_V: f64 = 3.7;
+
+    /// Pack de `cells` cellules, `capacity_mah` mAh, résistance interne `resistance` (Ω),
+    /// chargé à `charge` (0 à 1).
+    pub fn new(cells: u32, capacity_mah: f64, resistance: f64, charge: f64) -> Self {
+        let cells = cells as f64;
+        let capacity_wh = capacity_mah / 1000.0 * Self::NOMINAL_CELL_V * cells;
+        let mut b = Self {
+            capacity_wh,
+            energy_wh: capacity_wh * charge.clamp01(),
+            resistance,
+            cells,
+            voltage: 0.0,
+        };
+        b.voltage = b.open_circuit_voltage();
+        b
+    }
+
+    /// Capacité en mAh.
+    pub fn capacity_mah(&self) -> f64 {
+        self.capacity_wh / (Self::NOMINAL_CELL_V * self.cells) * 1000.0
+    }
+
     /// État de charge, 0 à 1.
     pub fn soc(&self) -> f64 {
         (self.energy_wh / self.capacity_wh).clamp01()
@@ -87,5 +111,26 @@ impl Clamp01 for f64 {
         } else {
             self
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_matches_default_pack() {
+        let b = Battery::new(4, 3000.0, 0.025, 1.0);
+        assert!((b.capacity_wh - 44.4).abs() < 1e-9);
+        assert!((b.voltage() - Battery::default().voltage()).abs() < 1e-9);
+        assert!((b.capacity_mah() - 3000.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn partial_charge_lowers_voltage() {
+        let full = Battery::new(4, 3000.0, 0.025, 1.0);
+        let half = Battery::new(4, 3000.0, 0.025, 0.5);
+        assert!(half.voltage() < full.voltage());
+        assert!((half.soc() - 0.5).abs() < 1e-12);
     }
 }

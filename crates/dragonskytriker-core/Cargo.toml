@@ -1,0 +1,16 @@
+[package]
+name = "dragonskytriker-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Cœur no_std de DragonSkyTriker : dynamique, environnement, capteurs, estimation, contrôle, autopilote."
+
+[dependencies]
+tiny-rodriguez-nostd = { path = "../tiny-rodriguez-nostd" }
+libm = "0.2"
+serde = { version = "1", default-features = false, features = ["derive"], optional = true }
+
+[features]
+default = []
+# Sérialisation des formes du monde (fichiers de monde JSON côté Bevy).
+serde = ["dep:serde"]

@@ -1,0 +1,20 @@
+[package]
+name = "tiny-rodriguez-nostd"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Géométrie différentielle minimale (SO(3), SE(3)) pour la robotique et les drones. #![no_std], sans allocation, sans unsafe."
+license = "GPL-2.0-or-later"
+readme = "README.md"
+keywords = ["no_std", "robotics", "drone", "so3", "se3"]
+categories = ["no-std", "mathematics", "science::robotics"]
+
+[dependencies]
+# Fonctions mathématiques (sin, cos, sqrt, atan2...) absentes de `core`.
+libm = "0.2"
+
+[features]
+default = []
+# Active les fonctions qui retournent un `Vec` (integrate_batch).
+# Nécessite un allocateur global sur la cible.
+alloc = []

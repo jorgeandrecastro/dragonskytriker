@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Se déclenche à chaque création de tag commençant par 'v' (ex: v0.1)
+      - 'v*'
 
 env:
   CARGO_TERM_COLOR: always
@@ -70,9 +70,9 @@ jobs:
             cp target/release/dragonskytriker release_staging/
             cp target/release/examples/headless release_staging/
           fi
-          # Copier les assets nécessaires (mondes JSON, etc.) s'ils existent
-          if [ -d "assets" ]; then
-            cp -r assets release_staging/
+          # Copier les assets depuis leur emplacement exact dans l'arborescence
+          if [ -d "crates/dragonskytriker/assets" ]; then
+            cp -r crates/dragonskytriker/assets release_staging/
           fi
 
       - name: Archive binary (Tar)
